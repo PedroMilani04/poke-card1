@@ -1,0 +1,29 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    transition: background-color 0.3s ease; /* Add background transition */
+    background-color: #fff; /* Initial background color */
+}
+
+.container {
+    position: relative;
+    cursor: pointer; /* Add cursor pointer */
+}
+
+.card {
+    width: 360px;
+    height: 500px;
+    perspective: 1000px; /* Add perspective for 3D effect */
+    transition: transform 0.1s ease, box-shadow 0.1s ease; /* Add transitions */
+    position: relative;
+    border-radius: 44px;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
