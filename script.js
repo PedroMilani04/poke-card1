@@ -3,8 +3,6 @@ const card = document.getElementById('card');
 const body = document.body;
 let isExpanded = false;
 let isHoverEnabled = true;
-let lastTouchTimestamp = 0;
-const DOUBLE_CLICK_THRESHOLD = 300; // Adjust this threshold as needed (in milliseconds)
 
 // Function to toggle card expansion and background color change
 function toggleCardExpansion() {
@@ -21,40 +19,25 @@ function toggleCardExpansion() {
     isExpanded = !isExpanded;
 }
 
-// Function to handle double click on touch devices
-function handleDoubleClick() {
-    const currentTimestamp = Date.now();
-    if (currentTimestamp - lastTouchTimestamp <= DOUBLE_CLICK_THRESHOLD) {
-        // If the time difference between two touches is less than the threshold, it's a double click
-        toggleCardExpansion();
-    }
-    lastTouchTimestamp = currentTimestamp;
-}
-
 // Add a click event listener to the container to toggle expansion and background change
 container.addEventListener('click', toggleCardExpansion);
-
-// Add touch event listeners to the container for double-click detection
-container.addEventListener('touchstart', handleDoubleClick);
 
 const cardCenterX = card.offsetWidth / 2;
 const cardCenterY = card.offsetHeight / 2;
 
-function handleMove(e) {
+container.addEventListener('mousemove', (e) => {
     // Check if hover effect transforms should be applied
     if (!isHoverEnabled) return;
 
-    const event = e.touches ? e.touches[0] : e; // Use the first touch if available, or the mouse event
+    // Calculate the position of the mouse relative to the card's center
+    const mouseX = (e.clientX - card.getBoundingClientRect().left) - cardCenterX;
+    const mouseY = (e.clientY - card.getBoundingClientRect().top) - cardCenterY;
 
-    // Calculate the position of the touch/mouse relative to the card's center
-    const mouseX = (event.clientX - card.getBoundingClientRect().left) - cardCenterX;
-    const mouseY = (event.clientY - card.getBoundingClientRect().top) - cardCenterY;
-
-    // Calculate the rotation angles based on the touch/mouse position
+    // Calculate the rotation angles based on the mouse position
     const tiltX = (mouseY / cardCenterY) * 30; // Tilt up or down
     const tiltY = -(mouseX / cardCenterX) * 30; // Tilt left or right
 
-    // Calculate the translation based on the touch/mouse position
+    // Calculate the translation based on the mouse position
     const translateZ = isExpanded ? 100 : 50; // Adjust the depth effect based on your preference
 
     // Apply the rotation and translation using CSS transform property
@@ -66,20 +49,13 @@ function handleMove(e) {
 
     // Apply the shadow using box-shadow property
     card.style.boxShadow = `${shadowX}px ${shadowY}px 20px rgba(0, 0, 0, 0.4)`;
-}
+});
 
-// Add event listeners for both mousemove and touchmove
-container.addEventListener('mousemove', handleMove);
-container.addEventListener('touchmove', handleMove);
-
-// Reset the card's rotation, translation, and shadow when the mouse or touch leaves the container
-function handleLeave() {
+// Reset the card's rotation, translation, and shadow when the mouse leaves the container
+container.addEventListener('mouseleave', () => {
     // Check if the card is expanded before resetting
     if (!isExpanded) {
         card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
         card.style.boxShadow = '0px 0px 20px rgba(0, 0, 0, 0.2)';
     }
-}
-
-container.addEventListener('mouseleave', handleLeave);
-container.addEventListener('touchend', handleLeave);
+});
