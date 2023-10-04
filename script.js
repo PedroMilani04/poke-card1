@@ -3,6 +3,8 @@ const card = document.getElementById('card');
 const body = document.body;
 let isExpanded = false;
 let isHoverEnabled = true;
+let lastTouchTimestamp = 0;
+const DOUBLE_CLICK_THRESHOLD = 300; // Adjust this threshold as needed (in milliseconds)
 
 // Function to toggle card expansion and background color change
 function toggleCardExpansion() {
@@ -19,21 +21,21 @@ function toggleCardExpansion() {
     isExpanded = !isExpanded;
 }
 
+// Function to handle double click on touch devices
+function handleDoubleClick() {
+    const currentTimestamp = Date.now();
+    if (currentTimestamp - lastTouchTimestamp <= DOUBLE_CLICK_THRESHOLD) {
+        // If the time difference between two touches is less than the threshold, it's a double click
+        toggleCardExpansion();
+    }
+    lastTouchTimestamp = currentTimestamp;
+}
+
 // Add a click event listener to the container to toggle expansion and background change
 container.addEventListener('click', toggleCardExpansion);
 
-// Function to handle touch events
-function handleTouch(e) {
-    if (e.touches.length === 1) {
-        // Only perform actions if a single touch is detected
-        e.preventDefault();
-        toggleCardExpansion();
-    }
-}
-
-// Add touch event listeners to the container
-container.addEventListener('touchstart', handleTouch);
-container.addEventListener('touchend', handleTouch);
+// Add touch event listeners to the container for double-click detection
+container.addEventListener('touchstart', handleDoubleClick);
 
 const cardCenterX = card.offsetWidth / 2;
 const cardCenterY = card.offsetHeight / 2;
