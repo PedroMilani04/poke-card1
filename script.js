@@ -22,22 +22,37 @@ function toggleCardExpansion() {
 // Add a click event listener to the container to toggle expansion and background change
 container.addEventListener('click', toggleCardExpansion);
 
+// Function to handle touch events
+function handleTouch(e) {
+    if (e.touches.length === 1) {
+        // Only perform actions if a single touch is detected
+        e.preventDefault();
+        toggleCardExpansion();
+    }
+}
+
+// Add touch event listeners to the container
+container.addEventListener('touchstart', handleTouch);
+container.addEventListener('touchend', handleTouch);
+
 const cardCenterX = card.offsetWidth / 2;
 const cardCenterY = card.offsetHeight / 2;
 
-container.addEventListener('mousemove', (e) => {
+function handleMove(e) {
     // Check if hover effect transforms should be applied
     if (!isHoverEnabled) return;
 
-    // Calculate the position of the mouse relative to the card's center
-    const mouseX = (e.clientX - card.getBoundingClientRect().left) - cardCenterX;
-    const mouseY = (e.clientY - card.getBoundingClientRect().top) - cardCenterY;
+    const event = e.touches ? e.touches[0] : e; // Use the first touch if available, or the mouse event
 
-    // Calculate the rotation angles based on the mouse position
+    // Calculate the position of the touch/mouse relative to the card's center
+    const mouseX = (event.clientX - card.getBoundingClientRect().left) - cardCenterX;
+    const mouseY = (event.clientY - card.getBoundingClientRect().top) - cardCenterY;
+
+    // Calculate the rotation angles based on the touch/mouse position
     const tiltX = (mouseY / cardCenterY) * 30; // Tilt up or down
     const tiltY = -(mouseX / cardCenterX) * 30; // Tilt left or right
 
-    // Calculate the translation based on the mouse position
+    // Calculate the translation based on the touch/mouse position
     const translateZ = isExpanded ? 100 : 50; // Adjust the depth effect based on your preference
 
     // Apply the rotation and translation using CSS transform property
@@ -49,13 +64,20 @@ container.addEventListener('mousemove', (e) => {
 
     // Apply the shadow using box-shadow property
     card.style.boxShadow = `${shadowX}px ${shadowY}px 20px rgba(0, 0, 0, 0.4)`;
-});
+}
 
-// Reset the card's rotation, translation, and shadow when the mouse leaves the container
-container.addEventListener('mouseleave', () => {
+// Add event listeners for both mousemove and touchmove
+container.addEventListener('mousemove', handleMove);
+container.addEventListener('touchmove', handleMove);
+
+// Reset the card's rotation, translation, and shadow when the mouse or touch leaves the container
+function handleLeave() {
     // Check if the card is expanded before resetting
     if (!isExpanded) {
         card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
         card.style.boxShadow = '0px 0px 20px rgba(0, 0, 0, 0.2)';
     }
-});
+}
+
+container.addEventListener('mouseleave', handleLeave);
+container.addEventListener('touchend', handleLeave);
