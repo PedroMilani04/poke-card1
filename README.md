@@ -18,7 +18,7 @@ This JavaScript application is a playground for experimenting with various CSS t
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/css-effects-display-card.git
+    git clone https://github.com/PedroMilani04/poke-card1.git
     ```
 
 2. Open the `index.html` file in your browser to see the application in action.
